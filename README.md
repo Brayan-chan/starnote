@@ -4,7 +4,7 @@
   </a>
 </p>
 
-<h1 align="center">starbasenote</h1>
+<h1 align="center">starnote</h1>
 <p align="center">
   <i>Open source project to
   bidireccional shring notes using <a src="https://peerjs.com/">Peer.js</a></i>
