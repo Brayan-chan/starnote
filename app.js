@@ -4,6 +4,7 @@ const peer = new Peer();
 // Variables de conexión y referencia al editor
 let conn;
 const editor = document.getElementById('editor');
+let isTyping = false; // Bandera para evitar bucles infinitos de sincronización
 
 // Mostrar el ID de peer del usuario
 peer.on('open', (id) => {
@@ -32,19 +33,23 @@ function setupConnection() {
 
     // Enviar contenido actual del editor al nuevo peer
     conn.on('open', () => {
-        conn.send(editor.value);
+        conn.send({ type: 'initial', content: editor.value });
     });
 
     // Recibir cambios de otros peers
     conn.on('data', (data) => {
-        editor.value = data;
+        if (data.type === 'update' && !isTyping) {
+            editor.value = data.content;
+        }
     });
 
     // Escuchar cambios en el editor y enviarlos al peer
     editor.addEventListener('input', () => {
+        isTyping = true;
         if (conn.open) {
-            conn.send(editor.value);
+            conn.send({ type: 'update', content: editor.value });
         }
+        setTimeout(() => { isTyping = false; }, 100); // Reiniciar bandera después de una pausa
     });
 }
 
