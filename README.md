@@ -14,14 +14,14 @@
 <h2>Using the project in two devices</h2>
 
 > [!NOTE]
-> This thest is in desktop version.
+> This test is in desktop version.
 
 <img alt="starnote – Scale-to-zero editor bidireccional starnote" src="editordesk.png?raw=true" width="1280">
 
 <br />
 
 > [!NOTE]
-> This thest is in mobile version.
+> This test is in mobile version.
 
 <img alt="starnote – Scale-to-zero editor bidireccional starnote" src="editormob.jpeg?raw=true" width="1280">
 
