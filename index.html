@@ -7,8 +7,8 @@
     <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
-        #editor { width: 80%; height: 300px; margin: 20px auto; padding: 10px; border: 1px solid #ccc; }
-        #peer-id { margin-bottom: 10px; }
+        #editor { width: 80%; height: 300px; margin: 20px auto; padding: 10px; border: 1px solid #ccc; overflow-y: auto; }
+        img { max-width: 100%; height: auto; }
     </style>
 </head>
 <body>
@@ -26,7 +26,8 @@
         <button id="connect-button">Conectar</button>
     </div>
 
-    <textarea id="editor" placeholder="Escribe aquí..."></textarea>
+    <div id="editor" contenteditable="true" placeholder="Escribe aquí..."></div>
+    <input type="file" id="image-upload" accept="image/*" style="margin-top: 10px;">
 
     <script src="app.js"></script>
 </body>
