@@ -1,8 +1,8 @@
 // Crear instancia de Peer
 const peer = new Peer();
 
-// Variables de conexión y referencia al editor
-let conn;
+// Variables
+let connections = []; // Arreglo para almacenar todas las conexiones
 const editor = document.getElementById('editor');
 let isTyping = false; // Bandera para evitar bucles infinitos de sincronización
 
@@ -12,46 +12,55 @@ peer.on('open', (id) => {
     console.log('Mi ID de Peer es:', id);
 });
 
-// Escuchar cuando se conecta un nuevo peer
-peer.on('connection', (newConn) => {
-    conn = newConn;
-    setupConnection();
+// Escuchar cuando se conecta un nuevo peer (recibiendo conexiones)
+peer.on('connection', (conn) => {
+    setupNewConnection(conn);
 });
 
-// Conectar a otro peer con el ID ingresado
+// Conectar a otro peer con el ID ingresado manualmente
 document.getElementById('connect-button').addEventListener('click', () => {
     const connectToId = document.getElementById('connect-to-id').value;
     if (connectToId) {
-        conn = peer.connect(connectToId);
-        setupConnection();
+        const conn = peer.connect(connectToId);
+        setupNewConnection(conn);
     }
 });
 
-// Configurar la conexión para enviar y recibir datos
-function setupConnection() {
-    if (!conn) return;
+// Configurar una nueva conexión y agregarla al arreglo de conexiones
+function setupNewConnection(conn) {
+    // Agregar la conexión a la lista si aún no existe
+    if (!connections.includes(conn)) {
+        connections.push(conn);
+    }
 
-    // Enviar contenido actual del editor al nuevo peer
+    // Enviar el contenido actual al nuevo peer cuando la conexión se abre
     conn.on('open', () => {
         conn.send({ type: 'initial', content: editor.value });
     });
 
-    // Recibir cambios de otros peers
+    // Escuchar datos entrantes de otros peers
     conn.on('data', (data) => {
         if (data.type === 'update' && !isTyping) {
             editor.value = data.content;
         }
     });
 
-    // Escuchar cambios en el editor y enviarlos al peer
-    editor.addEventListener('input', () => {
-        isTyping = true;
+    // Manejar el cierre de la conexión
+    conn.on('close', () => {
+        connections = connections.filter((c) => c !== conn);
+    });
+}
+
+// Sincronizar cambios en el editor con todos los peers
+editor.addEventListener('input', () => {
+    isTyping = true;
+    connections.forEach((conn) => {
         if (conn.open) {
             conn.send({ type: 'update', content: editor.value });
         }
-        setTimeout(() => { isTyping = false; }, 100); // Reiniciar bandera después de una pausa
     });
-}
+    setTimeout(() => { isTyping = false; }, 100);
+});
 
 // Manejar errores de Peer.js
 peer.on('error', (err) => {
