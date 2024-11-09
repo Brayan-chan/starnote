@@ -29,7 +29,7 @@
 <h2>Features</h2>
 <ul>
   <li><strong><a href="https://peerjs.com/">Peer.js</a></strong> to share information in bidireccional form</li>
-  <li><strong><a href="https://starbasedb.hashnode.space/default-guide/web-sockets/introduction">Web Socket Connections</a></strong> to any changes a user makes in the editor will be sent to all other users instantly.</li>
+  <li><strong><a href="https://starbasedb.hashnode.space/default-guide/web-sockets/introduction">Web Socket Connections</a></strong> to any changes a user makes in the editor will be sent to all other users instantly</li>
 </ul>
 <br />
 
