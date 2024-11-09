@@ -33,7 +33,7 @@ function setupNewConnection(conn) {
         connections.push(conn);
     }
 
-    // Enviar el contenido actual al nuevo peer cuando la conexión se abre
+    // Enviar el contenido actual del editor al nuevo peer cuando la conexión se abre
     conn.on('open', () => {
         conn.send({ type: 'initial', content: editor.value });
     });
@@ -41,6 +41,9 @@ function setupNewConnection(conn) {
     // Escuchar datos entrantes de otros peers
     conn.on('data', (data) => {
         if (data.type === 'update' && !isTyping) {
+            editor.value = data.content;
+            broadcastChange(data.content, conn); // Propagar el cambio a otros peers
+        } else if (data.type === 'initial') {
             editor.value = data.content;
         }
     });
@@ -51,12 +54,22 @@ function setupNewConnection(conn) {
     });
 }
 
+// Función para propagar el cambio a todos los peers excepto al que envió el cambio
+function broadcastChange(content, originConn) {
+    connections.forEach((conn) => {
+        if (conn !== originConn && conn.open) {
+            conn.send({ type: 'update', content: content });
+        }
+    });
+}
+
 // Sincronizar cambios en el editor con todos los peers
 editor.addEventListener('input', () => {
     isTyping = true;
+    const content = editor.value;
     connections.forEach((conn) => {
         if (conn.open) {
-            conn.send({ type: 'update', content: editor.value });
+            conn.send({ type: 'update', content: content });
         }
     });
     setTimeout(() => { isTyping = false; }, 100);
